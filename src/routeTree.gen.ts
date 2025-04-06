@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsImport } from './routes/settings'
+import { Route as AddDeviceImport } from './routes/addDevice'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
@@ -19,6 +20,12 @@ import { Route as IndexImport } from './routes/index'
 const SettingsRoute = SettingsImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AddDeviceRoute = AddDeviceImport.update({
+  id: '/addDevice',
+  path: '/addDevice',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/addDevice': {
+      id: '/addDevice'
+      path: '/addDevice'
+      fullPath: '/addDevice'
+      preLoaderRoute: typeof AddDeviceImport
+      parentRoute: typeof rootRoute
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -53,36 +67,41 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/addDevice': typeof AddDeviceRoute
   '/settings': typeof SettingsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/addDevice': typeof AddDeviceRoute
   '/settings': typeof SettingsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/addDevice': typeof AddDeviceRoute
   '/settings': typeof SettingsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/settings'
+  fullPaths: '/' | '/addDevice' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/settings'
-  id: '__root__' | '/' | '/settings'
+  to: '/' | '/addDevice' | '/settings'
+  id: '__root__' | '/' | '/addDevice' | '/settings'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AddDeviceRoute: typeof AddDeviceRoute
   SettingsRoute: typeof SettingsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AddDeviceRoute: AddDeviceRoute,
   SettingsRoute: SettingsRoute,
 }
 
@@ -97,11 +116,15 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/addDevice",
         "/settings"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/addDevice": {
+      "filePath": "addDevice.tsx"
     },
     "/settings": {
       "filePath": "settings.tsx"
