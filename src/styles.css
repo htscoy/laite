@@ -16,6 +16,7 @@ code {
 
 th,
 td {
-  border: 1px solid #eee;
+  border-bottom: 1px solid #eee;
   padding: 0.25rem 0.5rem;
+  text-align: right;
 }

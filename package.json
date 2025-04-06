@@ -3,10 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite --port 3000",
+    "start": "npm run start:db && npm run start:app",
     "build": "vite build && tsc",
     "serve": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "start:app": "vite --port 3000",
+    "start:db": "podman-compose start laite-psql"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
