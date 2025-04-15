@@ -1,0 +1,41 @@
+{
+  "_index-k6oHoLGZ.js": {
+    "file": "assets/index-k6oHoLGZ.js",
+    "name": "index",
+    "dynamicImports": [
+      "src/routes/api/users.$id.ts?pick=APIRoute",
+      "src/routes/api/users.$id.ts?pick=APIRoute",
+      "src/routes/api/users.ts?pick=APIRoute",
+      "src/routes/api/users.ts?pick=APIRoute"
+    ]
+  },
+  "src/routes/api/users.$id.ts?pick=APIRoute": {
+    "file": "users._id.js",
+    "name": "users._id",
+    "src": "src/routes/api/users.$id.ts?pick=APIRoute",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-k6oHoLGZ.js"
+    ]
+  },
+  "src/routes/api/users.ts?pick=APIRoute": {
+    "file": "users.js",
+    "name": "users",
+    "src": "src/routes/api/users.ts?pick=APIRoute",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-k6oHoLGZ.js"
+    ]
+  },
+  "virtual:$vinxi/handler/api": {
+    "file": "api.js",
+    "name": "api",
+    "src": "virtual:$vinxi/handler/api",
+    "isEntry": true,
+    "imports": [
+      "_index-k6oHoLGZ.js"
+    ]
+  }
+}

@@ -4,6 +4,7 @@ import { TextInput, NumberInput } from "../ui/Input";
 import { SubmitButton } from "../ui/Button";
 // We also support Valibot, ArkType, and any other standard schema library
 import { z } from "zod";
+import { addDevice } from "../actions/addDeviceFn";
 
 const { fieldContext, formContext } = createFormHookContexts();
 
@@ -24,19 +25,21 @@ const { useAppForm } = createFormHook({
 const AddDeviceForm = () => {
   const form = useAppForm({
     defaultValues: {
-      username: "",
-      age: 0,
+      serialNumber: "",
+      productGroup: "",
+      deviceName: "",
     },
     validators: {
       // Pass a schema or function to validate
       onChange: z.object({
-        username: z.string(),
-        age: z.number().min(13),
+        serialNumber: z.string(),
+        productGroup: z.string(),
+        deviceName: z.string(),
       }),
     },
-    onSubmit: ({ value }) => {
-      // Do something with form data
-      alert(JSON.stringify(value, null, 2));
+    onSubmit: async ({ value }) => {
+      const response = await addDevice({ data: value });
+      console.log(response);
     },
   });
 
@@ -46,22 +49,43 @@ const AddDeviceForm = () => {
         e.preventDefault();
         form.handleSubmit();
       }}
+      method="post"
     >
-      <h1>Personal Information</h1>
-      {/* Components are bound to `form` and `field` to ensure extreme type safety */}
-      {/* Use `form.AppField` to render a component bound to a single field */}
+      <h1>Add device</h1>
       <form.AppField
-        name="username"
-        children={(field) => <field.TextInput label="Full Name" />}
+        name="deviceName"
+        children={(field) => (
+          <field.TextInput
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+            label="Device Name"
+          />
+        )}
       />
-      {/* The "name" property will throw a TypeScript error if typo'd  */}
       <form.AppField
-        name="age"
-        children={(field) => <field.NumberInput label="Age" />}
+        name="serialNumber"
+        children={(field) => (
+          <field.TextInput
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+            label="Serial Number"
+          />
+        )}
+      />
+      {/* The "name" property will throw+ a TypeScript error if typo'd  */}
+      <form.AppField
+        name="productGroup"
+        children={(field) => (
+          <field.TextInput
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+            label="Product Group"
+          />
+        )}
       />
       {/* Components in `form.AppForm` have access to the form context */}
       <form.AppForm>
-        <form.SubmitButton />
+        <form.SubmitButton>Submit</form.SubmitButton>
       </form.AppForm>
     </form>
   );

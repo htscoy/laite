@@ -12,8 +12,10 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsImport } from './routes/settings'
-import { Route as AddDeviceImport } from './routes/addDevice'
 import { Route as IndexImport } from './routes/index'
+import { Route as PathlessLayoutNestedLayoutImport } from './routes/_pathlessLayout/_nested-layout'
+import { Route as PathlessLayoutNestedLayoutRouteBImport } from './routes/_pathlessLayout/_nested-layout/route-b'
+import { Route as PathlessLayoutNestedLayoutRouteAImport } from './routes/_pathlessLayout/_nested-layout/route-a'
 
 // Create/Update Routes
 
@@ -23,17 +25,32 @@ const SettingsRoute = SettingsImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AddDeviceRoute = AddDeviceImport.update({
-  id: '/addDevice',
-  path: '/addDevice',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const PathlessLayoutNestedLayoutRoute = PathlessLayoutNestedLayoutImport.update(
+  {
+    id: '/_pathlessLayout/_nested-layout',
+    getParentRoute: () => rootRoute,
+  } as any,
+)
+
+const PathlessLayoutNestedLayoutRouteBRoute =
+  PathlessLayoutNestedLayoutRouteBImport.update({
+    id: '/route-b',
+    path: '/route-b',
+    getParentRoute: () => PathlessLayoutNestedLayoutRoute,
+  } as any)
+
+const PathlessLayoutNestedLayoutRouteARoute =
+  PathlessLayoutNestedLayoutRouteAImport.update({
+    id: '/route-a',
+    path: '/route-a',
+    getParentRoute: () => PathlessLayoutNestedLayoutRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -46,13 +63,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/addDevice': {
-      id: '/addDevice'
-      path: '/addDevice'
-      fullPath: '/addDevice'
-      preLoaderRoute: typeof AddDeviceImport
-      parentRoute: typeof rootRoute
-    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -60,49 +70,100 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsImport
       parentRoute: typeof rootRoute
     }
+    '/_pathlessLayout/_nested-layout': {
+      id: '/_pathlessLayout/_nested-layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PathlessLayoutNestedLayoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/_pathlessLayout/_nested-layout/route-a': {
+      id: '/_pathlessLayout/_nested-layout/route-a'
+      path: '/route-a'
+      fullPath: '/route-a'
+      preLoaderRoute: typeof PathlessLayoutNestedLayoutRouteAImport
+      parentRoute: typeof PathlessLayoutNestedLayoutImport
+    }
+    '/_pathlessLayout/_nested-layout/route-b': {
+      id: '/_pathlessLayout/_nested-layout/route-b'
+      path: '/route-b'
+      fullPath: '/route-b'
+      preLoaderRoute: typeof PathlessLayoutNestedLayoutRouteBImport
+      parentRoute: typeof PathlessLayoutNestedLayoutImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface PathlessLayoutNestedLayoutRouteChildren {
+  PathlessLayoutNestedLayoutRouteARoute: typeof PathlessLayoutNestedLayoutRouteARoute
+  PathlessLayoutNestedLayoutRouteBRoute: typeof PathlessLayoutNestedLayoutRouteBRoute
+}
+
+const PathlessLayoutNestedLayoutRouteChildren: PathlessLayoutNestedLayoutRouteChildren =
+  {
+    PathlessLayoutNestedLayoutRouteARoute:
+      PathlessLayoutNestedLayoutRouteARoute,
+    PathlessLayoutNestedLayoutRouteBRoute:
+      PathlessLayoutNestedLayoutRouteBRoute,
+  }
+
+const PathlessLayoutNestedLayoutRouteWithChildren =
+  PathlessLayoutNestedLayoutRoute._addFileChildren(
+    PathlessLayoutNestedLayoutRouteChildren,
+  )
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/addDevice': typeof AddDeviceRoute
   '/settings': typeof SettingsRoute
+  '': typeof PathlessLayoutNestedLayoutRouteWithChildren
+  '/route-a': typeof PathlessLayoutNestedLayoutRouteARoute
+  '/route-b': typeof PathlessLayoutNestedLayoutRouteBRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/addDevice': typeof AddDeviceRoute
   '/settings': typeof SettingsRoute
+  '': typeof PathlessLayoutNestedLayoutRouteWithChildren
+  '/route-a': typeof PathlessLayoutNestedLayoutRouteARoute
+  '/route-b': typeof PathlessLayoutNestedLayoutRouteBRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/addDevice': typeof AddDeviceRoute
   '/settings': typeof SettingsRoute
+  '/_pathlessLayout/_nested-layout': typeof PathlessLayoutNestedLayoutRouteWithChildren
+  '/_pathlessLayout/_nested-layout/route-a': typeof PathlessLayoutNestedLayoutRouteARoute
+  '/_pathlessLayout/_nested-layout/route-b': typeof PathlessLayoutNestedLayoutRouteBRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/addDevice' | '/settings'
+  fullPaths: '/' | '/settings' | '' | '/route-a' | '/route-b'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/addDevice' | '/settings'
-  id: '__root__' | '/' | '/addDevice' | '/settings'
+  to: '/' | '/settings' | '' | '/route-a' | '/route-b'
+  id:
+    | '__root__'
+    | '/'
+    | '/settings'
+    | '/_pathlessLayout/_nested-layout'
+    | '/_pathlessLayout/_nested-layout/route-a'
+    | '/_pathlessLayout/_nested-layout/route-b'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AddDeviceRoute: typeof AddDeviceRoute
   SettingsRoute: typeof SettingsRoute
+  PathlessLayoutNestedLayoutRoute: typeof PathlessLayoutNestedLayoutRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AddDeviceRoute: AddDeviceRoute,
   SettingsRoute: SettingsRoute,
+  PathlessLayoutNestedLayoutRoute: PathlessLayoutNestedLayoutRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -116,18 +177,30 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/addDevice",
-        "/settings"
+        "/settings",
+        "/_pathlessLayout/_nested-layout"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/addDevice": {
-      "filePath": "addDevice.tsx"
-    },
     "/settings": {
       "filePath": "settings.tsx"
+    },
+    "/_pathlessLayout/_nested-layout": {
+      "filePath": "_pathlessLayout/_nested-layout.tsx",
+      "children": [
+        "/_pathlessLayout/_nested-layout/route-a",
+        "/_pathlessLayout/_nested-layout/route-b"
+      ]
+    },
+    "/_pathlessLayout/_nested-layout/route-a": {
+      "filePath": "_pathlessLayout/_nested-layout/route-a.tsx",
+      "parent": "/_pathlessLayout/_nested-layout"
+    },
+    "/_pathlessLayout/_nested-layout/route-b": {
+      "filePath": "_pathlessLayout/_nested-layout/route-b.tsx",
+      "parent": "/_pathlessLayout/_nested-layout"
     }
   }
 }

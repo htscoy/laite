@@ -6,9 +6,9 @@ interface InputProps extends ComponentProps<"input"> {
 
 function Input({ type, label, ...props }: InputProps) {
   return (
-    <div>
-      <input {...props} type={type} />
+    <div className="py-2 flex flex-col">
       <label>{label}</label>
+      <input {...props} type={type} className="border rounded-sm py-2 px-1" />
     </div>
   );
 }

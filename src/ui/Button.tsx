@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
 export function SubmitButton({
-  type = "button",
+  type = "submit",
   children,
   ...props
 }: ComponentProps<"button">) {

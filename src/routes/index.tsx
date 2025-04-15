@@ -3,10 +3,10 @@ import { DataTable } from "../components/DataTable";
 import { Topbar } from "../components/Topbar";
 
 export const Route = createFileRoute("/")({
-  component: App,
+  component: Home,
 });
 
-function App() {
+function Home() {
   return (
     <>
       <Topbar />
