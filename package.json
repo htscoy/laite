@@ -8,7 +8,7 @@
     "build": "vinxi build",
     "serve": "vite preview",
     "test": "vitest run",
-    "start:app": "vinxi start",
+    "start:app": "vinxi dev",
     "start:db": "podman-compose start laite-psql"
   },
   "dependencies": {
@@ -18,16 +18,20 @@
     "@tanstack/react-router-devtools": "^1.116.0",
     "@tanstack/react-start": "^1.116.1",
     "autoprefixer": "^10.4.21",
+    "kysely": "^0.28.0",
+    "pg": "^8.14.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "redaxios": "^0.5.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "^4.1.4",
+    "uuid": "^11.1.0",
     "vinxi": "0.5.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
+    "@types/pg": "^8.11.13",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "postcss": "^8.5.3",

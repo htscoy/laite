@@ -1,8 +1,17 @@
 {
+  "src/actions/addDeviceFn.ts?tsr-directive-use-server=": {
+    "file": "assets/addDeviceFn-Dg_syz81.js",
+    "name": "addDeviceFn",
+    "src": "src/actions/addDeviceFn.ts?tsr-directive-use-server=",
+    "isDynamicEntry": true
+  },
   "virtual:$vinxi/handler/server": {
     "file": "server.js",
     "name": "server",
     "src": "virtual:$vinxi/handler/server",
-    "isEntry": true
+    "isEntry": true,
+    "dynamicImports": [
+      "src/actions/addDeviceFn.ts?tsr-directive-use-server="
+    ]
   }
 }

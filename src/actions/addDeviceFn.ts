@@ -1,6 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
+import { v4 as uuidv4 } from "uuid";
+import { createDevice } from "~/db/device.table";
 
 interface DeviceData {
+  id: string;
   serialNumber: string;
   productGroup: string;
   deviceName: string;
@@ -8,13 +11,7 @@ interface DeviceData {
 
 export const addDevice = createServerFn({ method: "POST" })
   .validator((data: DeviceData) => {
-    if (!(data instanceof FormData)) {
-      throw new Error("Invalid form data");
-    }
-    const serialNumber = data.get("serialNumber");
-    const productGroup = data.get("productGroup");
-    const deviceName = data.get("deviceName");
-
+    const { serialNumber, productGroup, deviceName } = data;
     if (!serialNumber || !productGroup || !deviceName) {
       throw new Error("serialNumber and productGroup are required");
     }
@@ -25,6 +22,12 @@ export const addDevice = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data: { serialNumber, productGroup, deviceName } }) => {
-    console.log({ serialNumber, productGroup, deviceName });
+    const id = uuidv4();
+    createDevice({
+      id,
+      serial_number: serialNumber,
+      product_group_id: 1,
+      name: deviceName,
+    });
     return { serialNumber, productGroup, deviceName };
   });

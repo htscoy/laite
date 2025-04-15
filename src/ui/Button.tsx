@@ -11,3 +11,15 @@ export function SubmitButton({
     </button>
   );
 }
+
+export function Button({
+  type = "button",
+  children,
+  ...props
+}: ComponentProps<"button">) {
+  return (
+    <button {...props} type={type}>
+      {children}
+    </button>
+  );
+}
