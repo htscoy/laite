@@ -1,24 +1,29 @@
 import type { ComponentProps } from "react";
 
-export function SubmitButton({
-  type = "submit",
-  children,
-  ...props
-}: ComponentProps<"button">) {
+interface ButtonProps extends ComponentProps<"button"> {
+  variant?: "primary" | "secondary";
+}
+
+export function SubmitButton({ children, ...props }: ComponentProps<"button">) {
   return (
-    <button {...props} type={type}>
+    <Button {...props} type="submit">
       {children}
-    </button>
+    </Button>
   );
 }
 
 export function Button({
   type = "button",
+  variant = "primary",
   children,
   ...props
-}: ComponentProps<"button">) {
+}: ButtonProps) {
   return (
-    <button {...props} type={type}>
+    <button
+      {...props}
+      type={type}
+      className={`py-2 px-4 rounded-md ${variant === "primary" ? "bg-black text-white" : ""} ${props.className}`}
+    >
       {children}
     </button>
   );

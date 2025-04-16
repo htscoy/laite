@@ -2,6 +2,7 @@ import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 // Form components that pre-bind events from the form hook; check our "Form Composition" guide for more
 import { TextInput, NumberInput } from "../ui/Input";
 import { Button, SubmitButton } from "../ui/Button";
+import { Select } from "../ui/Select";
 // We also support Valibot, ArkType, and any other standard schema library
 import { z } from "zod";
 import { addDevice } from "../actions/addDeviceFn";
@@ -15,6 +16,7 @@ const { useAppForm } = createFormHook({
   fieldComponents: {
     TextInput,
     NumberInput,
+    Select,
   },
   formComponents: {
     SubmitButton,
@@ -26,7 +28,7 @@ const { useAppForm } = createFormHook({
 const AddDeviceForm = () => {
   const ref = useRef<HTMLVideoElement>(null);
   const [isCameraOn, setIsCameraOn] = useState<boolean | null>(null);
-  const [videoObj, setVideoObj] = useState();
+  const [videoObj, setVideoObj] = useState<HTMLVideoElement>();
   const form = useAppForm({
     defaultValues: {
       id: "",
@@ -49,22 +51,28 @@ const AddDeviceForm = () => {
     },
   });
 
+  let intervalId: NodeJS.Timeout;
+
   useEffect(() => {
-    if (
-      navigator.mediaDevices &&
-      navigator.mediaDevices.getUserMedia &&
-      ref.current !== null
-    ) {
-      // Use video without audio
-      const constraints = {
+    if (ref.current !== null) {
+      setVideoObj(ref.current);
+    }
+  }, []);
+
+  if (
+    navigator.mediaDevices &&
+    navigator.mediaDevices.getUserMedia &&
+    videoObj &&
+    form.getFieldValue("serialNumber") === ""
+  ) {
+    // Start video stream
+    navigator.mediaDevices
+      .getUserMedia({
         video: true,
         audio: false,
-      };
-      // setVideoObj(ref.current);
-
-      // Start video stream
-      navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
-        ref.current.srcObject = stream;
+      })
+      .then(async (stream) => {
+        videoObj.srcObject = stream;
 
         // check compatibility
         if (!("BarcodeDetector" in globalThis)) {
@@ -82,6 +90,7 @@ const AddDeviceForm = () => {
 
           const detectCode = () => {
             // Start detecting codes on to the video element
+            if (!ref.current) return;
             detector
               .detect(ref.current)
               .then((codes) => {
@@ -91,21 +100,40 @@ const AddDeviceForm = () => {
                 for (const barcode of codes) {
                   // Log the barcode to the console
                   console.log("Detected code: ", barcode);
+                  form.setFieldValue("serialNumber", barcode.rawValue);
+                  clearInterval(intervalId);
                 }
               })
               .catch((err) => {
                 // Log an error if one happens
-                console.error(err);
+                console.error(err, ref.current);
               });
           };
-          setInterval(detectCode, 50);
+
+          intervalId = setInterval(detectCode, 50);
         }
       });
-    }
-  }, []);
+  }
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
+      <div className="flex w-fit border rounded-md">
+        <Button
+          onClick={() => setIsCameraOn(true)}
+          variant={isCameraOn ? "primary" : "secondary"}
+        >
+          Use camera
+        </Button>
+        <Button
+          onClick={() => {
+            setIsCameraOn(false);
+            clearInterval(intervalId);
+          }}
+          variant={isCameraOn ? "secondary" : "primary"}
+        >
+          Fill in manually
+        </Button>
+      </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -113,17 +141,18 @@ const AddDeviceForm = () => {
         }}
         method="post"
       >
-        <h1>Add device</h1>
         <form.AppField
-          name="deviceName"
+          name="productGroup"
           children={(field) => (
-            <field.TextInput
+            <field.Select
+              options={[{ value: "lol" }]}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              label="Device Name"
+              label="Product Group"
             />
           )}
         />
+
         <form.AppField
           name="serialNumber"
           children={(field) => (
@@ -134,28 +163,31 @@ const AddDeviceForm = () => {
             />
           )}
         />
-        {/* The "name" property will throw+ a TypeScript error if typo'd  */}
+
         <form.AppField
-          name="productGroup"
+          name="deviceName"
           children={(field) => (
             <field.TextInput
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              label="Product Group"
+              label="Device Name"
             />
           )}
         />
-        {/* Components in `form.AppForm` have access to the form context */}
+
         <form.AppForm>
           <form.SubmitButton>Submit</form.SubmitButton>
         </form.AppForm>
       </form>
 
-      {isCameraOn ? (
-        <video ref={ref} id="video" width="640" height="480" autoPlay></video>
-      ) : (
-        <Button onClick={() => setIsCameraOn(!isCameraOn)}>Use camera</Button>
-      )}
+      <video
+        ref={ref}
+        id="video"
+        width="640"
+        height="480"
+        hidden={!isCameraOn}
+        autoPlay
+      ></video>
     </div>
   );
 };
